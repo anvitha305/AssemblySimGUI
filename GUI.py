@@ -6,9 +6,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 global filename
 global darkMode
+global regs
 class AssemblySimApp(tk.Tk):
 	def __init__(self, *args, **kwargs):
 		global darkMode
+		global regs
 		tk.Tk.__init__(self, *args, **kwargs)
 		self.title = "legv8 assembly simulator"
 		self.geometry("1000x700+200+200")
@@ -24,15 +26,17 @@ class AssemblySimApp(tk.Tk):
 		self.button2.grid(row = 0, column = 2, padx=10, pady=10)
 		self.button3 = ttk.Button(text = "Open File", command = self.browseFiles) 
 		self.button3.grid(row=0, column=3,padx=10,pady=10)
+		self.button4 = ttk.Button(text="Step")
+		self.button4.grid(row=0, column=4,padx=10,pady=10)
 		self.label2 = ttk.Label(text = "File to be simulated:", style="Cont.TLabel")
-		self.label2.grid(row=1, column=0, padx=10,pady=10)
+		self.label2.grid(row=1, column=0, padx=10,pady=10, columnspan = 4, sticky = tk.W+tk.E)
 		self.label3 = ttk.Label(text="Registers View", style="My.TLabel")
-		self.label3.grid(row=3, column=0,padx=10,pady=10)
-		for i in range(0,8):
-			self.label4 = ttk.Label(text="X"+str(i), style="Cont.TLabel")
-			self.entry2 = ttk.Entry()
-			self.label4.grid(row=4, column=i*2, padx=10,pady=10)
-			self.entry2.grid(row=4, column=i*2+1, padx=10, pady=10)
+		self.label3.grid(row=3, column=0,padx=10,pady=10, columnspan = 4, sticky = tk.W+tk.E)
+		self.frame = tk.Frame()
+		self.frame.grid(row=4, column=0, columnspan = 5)
+		my_list = [("x"+str(i), 0) for i in range(32) ]
+		regs = [my_list[i * 4:(i + 1) * 4] for i in range((len(my_list) + 4 - 1) // 4 )] 
+		self.regis =Table(self.frame, regs)
 		darkMode = False
 	def darkMode(self):
 		global darkMode	
@@ -65,7 +69,7 @@ class AssemblySimApp(tk.Tk):
 		file.close()
 		self.labelfile = ttk.Label(text=filename, style="Cont.TLabel")
 		self.labelfile.grid(row=1, column=1, columnspan=5, padx=10, pady=10)
-		self.labelcont = scrolledtext.ScrolledText(wrap = tk.WORD, height = 8, font = ("Arial", 15))
+		self.labelcont = scrolledtext.ScrolledText(wrap = tk.WORD, height = 4, font = ("Arial", 15))
 		if darkMode:
 			self.labelcont.configure(bg="black",fg="white")
 		else:
@@ -73,6 +77,18 @@ class AssemblySimApp(tk.Tk):
 		self.labelcont.grid(row=2, column=0,columnspan=6, padx=10, pady=10)
 		self.labelcont.insert(tk.INSERT, txt)
 		self.labelcont.configure(state="disabled")
+class Table:
+	def __init__(self,root, lst):
+		# code for creating table
+		total_rows = len(lst)
+		total_columns = len(lst[0])
+		for i in range(total_rows):
+			for j in range(total_columns):
+				self.lab = tk.Label(root, text = lst[i][j][0])
+				self.lab.grid(row=i, column = 2*j)
+				self.e = tk.Entry(root, width=20)
+				self.e.grid(row=i, column=2*j+1)
+				self.e.insert(tk.END, lst[i][j][1])
 app = AssemblySimApp()
 
 app.mainloop()
