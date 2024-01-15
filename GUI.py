@@ -3,21 +3,23 @@ import tkinter.ttk as ttk
 from tkinter import scrolledtext
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
-import pandas as pd
+import ast
 global filename
 global darkMode
-global regs
+global stringvars
+global entries
+global tabl
 class AssemblySimApp(tk.Tk):
 	def __init__(self, *args, **kwargs):
 		global darkMode
-		global regs
+		global tabl
 		tk.Tk.__init__(self, *args, **kwargs)
 		self.title = "legv8 assembly simulator"
 		self.geometry("1000x700+200+200")
 		self.style = ttk.Style(self.master)
-		self.style.configure("My.TLabel", font=('Arial', 30))
+		self.style.configure("My.TLabel", font=('Arial', 20))
 		self.style.configure("Cont.TLabel", font=('Arial', 15))
-		self.style.configure("TButton", font=('Arial, 20'))
+		self.style.configure("TButton", font=('Arial, 15'))
 		self.label1 = ttk.Label(text="File View", style="My.TLabel")
 		self.label1.grid(row=0, column = 0, padx=10, pady=10)
 		self.button1 = ttk.Button(text="Dark Mode", command=self.darkMode)
@@ -35,13 +37,17 @@ class AssemblySimApp(tk.Tk):
 		self.frame = tk.Frame()
 		self.frame.grid(row=4, column=0, columnspan = 5)
 		my_list = [("x"+str(i), 0) for i in range(32) ]
-		regs = [my_list[i * 4:(i + 1) * 4] for i in range((len(my_list) + 4 - 1) // 4 )] 
-		self.regis =Table(self.frame, regs)
+		tabl = [my_list[i * 4:(i + 1) * 4] for i in range((len(my_list) + 4 - 1) // 4 )] 
+		self.regis =Table(self.frame, tabl)
+		self.label3 = ttk.Label(text="Memory View", style="My.TLabel")
+		self.label3.grid(row=5, column=0,padx=10,pady=10, columnspan = 4, sticky = tk.W+tk.E)
+		self.frame2 = tk.Frame()
 		darkMode = False
 	def darkMode(self):
 		global darkMode	
 		self.configure(bg='black')
 		self.style.configure("TLabel", background="black",foreground="white")
+		self.style.configure("TEntry", background="black",foreground="white")
 		try:
 			self.labelcont.configure(bg="black",fg="white")
 		except Exception as e:
@@ -77,16 +83,26 @@ class AssemblySimApp(tk.Tk):
 		self.labelcont.grid(row=2, column=0,columnspan=6, padx=10, pady=10)
 		self.labelcont.insert(tk.INSERT, txt)
 		self.labelcont.configure(state="disabled")
+def doSomething(event):
+	text = event.widget.get()
+	try:
+		print([ast.literal_eval(i.get()) for i in entries])
+	except Exception as e:
+		print(e)
 class Table:
 	def __init__(self,root, lst):
+		global entries
 		# code for creating table
 		total_rows = len(lst)
 		total_columns = len(lst[0])
+		entries = []
 		for i in range(total_rows):
 			for j in range(total_columns):
 				self.lab = tk.Label(root, text = lst[i][j][0])
 				self.lab.grid(row=i, column = 2*j)
 				self.e = tk.Entry(root, width=20)
+				self.e.bind('<Key-Return>', doSomething)
+				entries.append(self.e)
 				self.e.grid(row=i, column=2*j+1)
 				self.e.insert(tk.END, lst[i][j][1])
 app = AssemblySimApp()
