@@ -29,30 +29,38 @@ class AssemblySimApp(tk.Tk):
 		self.button2.grid(row = 0, column = 2, padx=10, pady=10)
 		self.button3 = ttk.Button(text = "Open File", command = self.browseFiles) 
 		self.button3.grid(row=0, column=3,padx=10,pady=10)
-		self.button4 = ttk.Button(text="Step")
+		self.button4 = ttk.Button(text="Step", command = self.updateMemory)
 		self.button4.grid(row=0, column=4,padx=10,pady=10)
 		self.label2 = ttk.Label(text = "File to be simulated:", style="Cont.TLabel")
-		self.label2.grid(row=1, column=0, padx=10,pady=10, columnspan = 4, sticky = tk.W+tk.E)
+		self.label2.grid(row=1, column=0, padx=10,pady=10, columnspan = 5, sticky = tk.W+tk.E)
 		self.label3 = ttk.Label(text="Registers View", style="My.TLabel")
-		self.label3.grid(row=3, column=0,padx=10,pady=10, columnspan = 4, sticky = tk.W+tk.E)
+		self.label3.grid(row=3, column=0,padx=10,pady=10, columnspan = 5, sticky = tk.W+tk.E)
 		self.frame = tk.Frame()
 		self.frame.grid(row=4, column=0, columnspan = 5)
+		self.sf1 = ScrollFrame(self.frame)
 		my_list = [("x"+str(i), 0) for i in range(32) ]
 		tabl = [my_list[i * 4:(i + 1) * 4] for i in range((len(my_list) + 4 - 1) // 4 )] 
-		self.regis =Table(self.frame, tabl)
+		self.regis =Table(self.sf1.viewPort, tabl)
+		self.sf1.grid(row=4, column=0,padx=1,pady=1, columnspan = 5)
 		self.label3 = ttk.Label(text="Memory View", style="My.TLabel")
-		self.label3.grid(row=5, column=0,padx=10,pady=10, columnspan = 4, sticky = tk.W+tk.E)
+		self.label3.grid(row=5, column=0,padx=10,pady=10, columnspan = 5, sticky = tk.W+tk.E)
 		self.frame2 = tk.Frame()
 		self.sf = ScrollFrame(self.frame2)
-		
-		self.frame2.grid(row=6, column=0,padx=10,pady=10, columnspan = 4)
-		self.sf.grid(row=6, column=0,padx=10,pady=10, columnspan = 4)
+		self.frame2.grid(row=6, column=0,padx=0,pady=0, columnspan = 5)
+		self.sf.grid(row=6, column=0,padx=1,pady=1, columnspan = 5)
+		self.label4 = ttk.Label(text="Error View", style="My.TLabel")
+		self.label4.grid(row=7, column=0,padx=10,pady=10, columnspan = 5, sticky = tk.W+tk.E)
+		self.frame3 = tk.Frame()
+		self.sf2 = ScrollFrame(self.frame3)
+		self.frame3.grid(row=8, column=0,padx=0,pady=0, columnspan = 5)
+		self.sf2.grid(row=8, column=0,padx=1,pady=1, columnspan = 5)
 		darkMode = False
 	def darkMode(self):
 		global darkMode	
 		self.configure(bg='black')
 		self.style.configure("TLabel", background="black",foreground="white")
 		self.style.configure("TEntry", background="black",foreground="white")
+		self.style.configure("TFrame", background="black",foreground="white")
 		try:
 			self.labelcont.configure(bg="black",fg="white")
 		except Exception as e:
@@ -62,6 +70,8 @@ class AssemblySimApp(tk.Tk):
 		global darkMode
 		self.configure(bg='white')
 		self.style.configure("TLabel", background="white", foreground="black")
+		self.style.configure("TEntry", background="white",foreground="black")
+		self.style.configure("TFrame", background="white",foreground="black")
 		try:
 			self.labelcont.configure(bg="white",fg="black")
 		except Exception as e:
@@ -88,6 +98,15 @@ class AssemblySimApp(tk.Tk):
 		self.labelcont.grid(row=2, column=0,columnspan=6, padx=10, pady=10)
 		self.labelcont.insert(tk.INSERT, txt)
 		self.labelcont.configure(state="disabled")
+
+	#dummy code for updating memory
+	def updateMemory(self):
+		for row in range(100):
+			a = row
+			tk.Label(self.sf.viewPort, text="%s" % row, width=3, borderwidth="1", relief="solid").grid(row=row, column=0)
+			t="this is the second column for row %s" %row
+			tk.Button(self.sf.viewPort, text=t, command=lambda x=a: print("Hello " + str(x))).grid(row=row, column=1)
+
 def doSomething(event):
 	text = event.widget.get()
 	try:
