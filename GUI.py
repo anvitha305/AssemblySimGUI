@@ -3,6 +3,7 @@ import tkinter.ttk as ttk
 from tkinter import scrolledtext
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
+from scrollframe import *
 import ast
 global filename
 global darkMode
@@ -42,6 +43,10 @@ class AssemblySimApp(tk.Tk):
 		self.label3 = ttk.Label(text="Memory View", style="My.TLabel")
 		self.label3.grid(row=5, column=0,padx=10,pady=10, columnspan = 4, sticky = tk.W+tk.E)
 		self.frame2 = tk.Frame()
+		self.sf = ScrollFrame(self.frame2)
+		
+		self.frame2.grid(row=6, column=0,padx=10,pady=10, columnspan = 4)
+		self.sf.grid(row=6, column=0,padx=10,pady=10, columnspan = 4)
 		darkMode = False
 	def darkMode(self):
 		global darkMode	
